@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Discord Templates</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2c2f33;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #23272a;
+    }
+    header h1 {
+      color: #7289da;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #23272a;
+      border-radius: 8px;
+    }
+    form input, form textarea, form button {
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+    }
+    form button {
+      background-color: #7289da;
+      color: white;
+      cursor: pointer;
+    }
+    .invite-button {
+      padding: 10px 20px;
+      background-color: #7289da;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 10px;
+      font-weight: bold;
+    }
+    .templates-list {
+      margin-top: 20px;
+    }
+    .template-item {
+      background-color: #23272a;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Upload Your Discord Templates</h1>
+    <a class="invite-button" href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_CLIENT_ID&permissions=2147483647&scope=bot%20applications.commands">
+      Invite the Bot (Optional)
+    </a>
+  </header>
+
+  <div class="container">
+    <h2>Upload Template</h2>
+    <form id="uploadTemplateForm">
+      <input type="text" id="templateName" placeholder="Template Name" required>
+      <textarea id="templateDescription" placeholder="Template Description" rows="4" required></textarea>
+      <input type="url" id="templateLink" placeholder="Discord Template Link (https://discord.new/...)" required>
+      <button type="submit">Upload Template</button>
+    </form>
+    <p id="message"></p>
+
+    <h2>Saved Templates</h2>
+    <div class="templates-list" id="templatesList"></div>
+  </div>
+
+  <script>
+    // Load saved templates from localStorage
+    function loadTemplates() {
+      const savedTemplates = JSON.parse(localStorage.getItem("discordTemplates")) || [];
+      const templatesList = document.getElementById("templatesList");
+      templatesList.innerHTML = ''; // Clear previous list
+
+      savedTemplates.forEach(template => {
+        const templateDiv = document.createElement("div");
+        templateDiv.className = "template-item";
+        templateDiv.innerHTML = `
+          <strong>${template.name}</strong><br>
+          ${template.description}<br>
+          <a href="${template.link}" target="_blank">${template.link}</a>
+        `;
+        templatesList.appendChild(templateDiv);
+      });
+    }
+
+    // Save template to localStorage
+    function saveTemplate(name, description, link) {
+      const savedTemplates = JSON.parse(localStorage.getItem("discordTemplates")) || [];
+      savedTemplates.push({ name, description, link });
+      localStorage.setItem("discordTemplates", JSON.stringify(savedTemplates));
+    }
+
+    document.getElementById("uploadTemplateForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("templateName").value;
+      const description = document.getElementById("templateDescription").value;
+      const link = document.getElementById("templateLink").value;
+
+      // Save the template to localStorage
+      saveTemplate(name, description, link);
+
+      // Show success message
+      document.getElementById("message").innerText = "Template uploaded successfully!";
+      
+      // Reload the templates list
+      loadTemplates();
+    });
+
+    // Initial load of templates
+    loadTemplates();
+  </script>
+</body>
+</html>
